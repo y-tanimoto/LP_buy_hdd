@@ -22,9 +22,9 @@ max_sz = 0
 max_po = 0
 
 for row in range(M):
-    sz_i = data.iat[row, 5] * data.iat[row, 6] * data.iat[row, 7]
-    pr_ij = data.iat[row, 13]
-    po_ij = data.iat[row, 14]
+    sz_i = data.iat[row, 6] * data.iat[row, 7] * data.iat[row, 8]
+    pr_ij = data.iat[row, 16]
+    po_ij = data.iat[row, 17]
 
     if sz_i > max_sz:
         max_sz = sz_i
@@ -35,21 +35,20 @@ for row in range(M):
 
 for row in range(M):
     i = data.iat[row, 0]
-    j = data.iat[row, 11]
+    j = data.iat[row, 14]
 
     # 変数名
     var_name = "x(" + str(i) + "," + str(j) + ")"
 
     # 各データの取得
     ev_i = data.iat[row, 3]
-    cp_i = data.iat[row, 4]
-    sz_i = data.iat[row, 5] * data.iat[row, 6] * data.iat[row, 7]
-    wh_i = data.iat[row, 8]
-    wr_i = data.iat[row, 9]
-    rd_i = data.iat[row, 10]
-    pr_ij = data.iat[row, 13]
-    po_ij = data.iat[row, 14]
-    pt_ij = data.iat[row, 15] + data.iat[row, 16]
+    cp_i = data.iat[row, 5]
+    sz_i = data.iat[row, 6] * data.iat[row, 7] * data.iat[row, 8]
+    wh_i = data.iat[row, 9]
+    ts_i = data.iat[row, 12]
+    pr_ij = data.iat[row, 16]
+    po_ij = data.iat[row, 17]
+    pt_ij = data.iat[row, 18] + data.iat[row, 19]
 
     if np.isnan(ev_i):
         ev_i = 0
@@ -59,10 +58,8 @@ for row in range(M):
         sz_i = 0
     if np.isnan(wh_i):
         wh_i = 0
-    if np.isnan(wr_i):
-        wr_i = 0
-    if np.isnan(rd_i):
-        rd_i = 0
+    if np.isnan(ts_i):
+        ts_i = 0
     if np.isnan(pr_ij):
         pr_ij = 0
     if np.isnan(po_ij):
@@ -70,15 +67,11 @@ for row in range(M):
     if np.isnan(pt_ij):
         pt_ij = 0
 
-    if po_ij == 0:
-        po_ij = 1
-
     # 目的関数セッション
     str_maximize += str(max_pr - pr_ij) + " " + var_name + " + "
     str_maximize += str(cp_i) + " " + var_name + " + "
     str_maximize += str(ev_i) + " " + var_name + " + "
-    str_maximize += str(wr_i) + " " + var_name + " + "
-    str_maximize += str(rd_i) + " " + var_name + " + "
+    str_maximize += str(ts_i) + " " + var_name + " + "
     str_maximize += str(max_sz - sz_i) + " " + var_name + " + "
     str_maximize += str(wh_i) + " " + var_name + " + "
     str_maximize += str(max_po - po_ij) + " " + var_name + " + "
@@ -111,7 +104,7 @@ for row in range(M):
         str_general += "\n"
 
 str_c1 += " >= 1"
-str_c2 += " >= 6000"
+str_c2 += " = 8000"
 str_c3 += " <= 50000"
 
 str_subject_to += str_c1 + "\n" + str_c2 + "\n" + str_c3
@@ -122,6 +115,6 @@ print(str_bounds)
 print(str_general)
 print("end")
 
-f = open('buy_ssd.lp', 'w')
+f = open('buy_hdd.lp', 'w')
 f.write(str_maximize + "\n" + str_subject_to + "\n" + str_bounds + "\n" + str_general + "\nend")
 f.close()
